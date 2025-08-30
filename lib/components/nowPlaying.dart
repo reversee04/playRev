@@ -12,11 +12,12 @@ class NowPlaying extends StatefulWidget {
 class _NowPlaying extends State<NowPlaying>{
   @override
   Widget build(BuildContext context){
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        border: const Border(top: BorderSide(color: Colors.grey)),
+        color: colorScheme.surface,
+        border: Border(top: BorderSide(color: colorScheme.outline.withOpacity(0.2))),
       ),
       child: Row(
         children: [
@@ -30,18 +31,26 @@ class _NowPlaying extends State<NowPlaying>{
             ),
           ),
           const SizedBox(width: 12),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("This Girl", style: TextStyle(fontWeight: FontWeight.bold)),
-                Text("Kungs"),
+                Text("This Girl", style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                )
+                ),
+                Text("Kungs",
+                    style: TextStyle(
+                      color: colorScheme.onSurface.withOpacity(0.7),
+                    )
+                ),
               ],
             ),
           ),
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.skip_previous),
+            icon:  Icon(Icons.skip_previous, color: colorScheme.onSurface,),
           ),
           IconButton(
             onPressed: () {},
@@ -49,7 +58,7 @@ class _NowPlaying extends State<NowPlaying>{
           ),
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.skip_next),
+            icon: Icon(Icons.skip_next, color: colorScheme.onSurface),
           ),
         ],
       ),

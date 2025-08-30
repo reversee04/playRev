@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:playrev/themes/theme_provider.dart';
 import 'package:playrev/components/nowPlaying.dart';
 
-class IndexLayout extends StatefulWidget {
+class IndexLayout extends ConsumerStatefulWidget {
   const IndexLayout({super.key, required this.title});
 
   final String title;
 
   @override
-  State<IndexLayout> createState() => _IndexLayout();
+  ConsumerState<IndexLayout> createState() => _IndexLayout();
 }
 
-class _IndexLayout extends State<IndexLayout> {
+class _IndexLayout extends ConsumerState<IndexLayout> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<Map<String, String>> songs = [
     {"title": "Starboy", "artist": "The Weeknd, Daft Punk", "image": "https://picsum.photos/id/1035/200/200"},
     {"title": "In the Name of Love", "artist": "Martin Garrix, Bebe Rexha", "image": "https://picsum.photos/id/1012/200/200"},
@@ -23,13 +26,19 @@ class _IndexLayout extends State<IndexLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(appThemeModeProvider);
+    final themeNotifier = ref.read(appThemeModeProvider.notifier);
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
         elevation: 0,
         centerTitle: true,
-        leading: Icon(Icons.list, size: 40, color: Theme.of(context).colorScheme.onPrimary,),
+        leading: IconButton(
+          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+            icon: Icon(Icons.list, size: 40, color: Theme.of(context).colorScheme.onPrimary,)
+        ),
         title:  Text(
           "PlayRev",
           style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold),
@@ -37,6 +46,46 @@ class _IndexLayout extends State<IndexLayout> {
         actions:  [
           Icon(Icons.person, color: Theme.of(context).colorScheme.onPrimary, size: 40,),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(child: Text('Menu',style: TextStyle(fontSize: 24),)
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {
+                Navigator.pop(context);
+                showModalBottomSheet(
+                    context: context,
+                    builder: (context){
+                      return Consumer(
+                        builder: (context, ref, _){
+                          final themeMode = ref.watch(appThemeModeProvider);
+                          final themeNotifier = ref.read(appThemeModeProvider.notifier);
+                          return ListTile(
+                            title: Text('Dark Mode'),
+                            trailing: Switch(
+                              value: themeMode == ThemeMode.dark,
+                              onChanged: (value){
+                                if(value){
+                                  themeNotifier.setDarkTheme();
+                                } else {
+                                  themeNotifier.setLightTheme();
+                                }
+                                Navigator.pop(context);
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    }
+                );
+              },
+            ),
+          ],
+        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

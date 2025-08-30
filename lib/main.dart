@@ -1,31 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playrev/pages/indexLayout.dart';
-
+import 'package:playrev/themes/themes.dart';
+import 'package:playrev/themes/theme_provider.dart';
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appThemes = AppThemes();
+    final themeMode = ref.watch(appThemeModeProvider);
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme:  ColorScheme(
-          brightness: Brightness.light,
-          primary: Colors.grey.shade900, // Primary color
-          onPrimary: Colors.white,     // Text/icon color on primary
-          secondary: Colors.black,
-          onSecondary: Colors.white,
-          error: Colors.red,
-          onError: Colors.white,
-          surface: Colors.white,
-          onSurface: Colors.black,
-        ),
-        useMaterial3: true,      ),
+      title: 'PLAYREV',
+      theme: appThemes.lightTheme,
+      darkTheme: appThemes.darkTheme,
+      themeMode: themeMode,
       home: const IndexLayout(title: 'PLAYREV'),
     );
   }
